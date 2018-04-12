@@ -14,7 +14,7 @@ const double epsilon = 1e-4;
 
 class Point { // defined in 2D Cartesian space, if used by robot arm, need forward kinematics to convert into Cartesian space
 public:
-    Point();
+    Point() {}
     Point(double x, double y) : x_(x), y_(y) {};
     double x_;
     double y_;
@@ -30,8 +30,7 @@ public:
         c.y_ = y_ - rhs.y_;
         return c;
     }
-    double operator*(const Point &rhs) {
-        return (x_ * rhs.x_ + y_ * rhs.y_);
+    double operator*(const Point &rhs) {return (x_ * rhs.x_ + y_ * rhs.y_);
     }
     Point operator*(double r) {
         Point c;
