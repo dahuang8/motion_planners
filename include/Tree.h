@@ -10,13 +10,15 @@
 #include <memory>
 #include <cstring>
 #include <iostream>
+#include "Point.h"
 
 namespace plan {
 
 class TreeNode {
 public:
     TreeNode() {
-        memset(value_, 0, sizeof(value_));
+        parent_ = nullptr;
+        value_ = Eigen::MatrixXd::Constant(value_.rows(), value_.cols(), 0.0);
     };
     ~TreeNode() {
         for (int i0 = 0; i0 < subtrees_.size(); i0++) {
@@ -28,18 +30,29 @@ public:
         parent_ = tree_node;
     }
     void AddChild(TreeNode * tree_node) {
+        tree_node->SetParent(this);
         subtrees_.push_back(tree_node);
-
     }
-    void SetValue(const double *p_val, int n) {
-        assert(n <= 6);
-        for(int i0 = 0; i0 < n; i0++) {
-            value_[i0] = p_val[i0];
+    void SetValue(const Point &pt) {
+        value_ = pt;
+    }
+
+    double FindClosestPoint(const Point &query_pt, TreeNode **closest_node) {
+        double min_dist = (query_pt - value_).norm();
+        *closest_node = this;
+        for(int i0 = 0; i0 < subtrees_.size(); i0++) {
+            auto subtree = subtrees_.at(i0);
+            TreeNode *sub_cloest_node;
+            double sub_min_dist = subtree->FindClosestPoint(query_pt, &sub_cloest_node);
+            if (sub_min_dist < min_dist) {
+                *closest_node = sub_cloest_node;
+                min_dist = sub_min_dist;
+            }
         }
     }
     void TraverseTree_DepthFirst() { // this is depth-first
         std::cout << "-------------------------------" << std::endl;
-        for (int i1 = 0; i1 < 6; i1++) {
+        for (int i1 = 0; i1 < value_.size(); i1++) {
             std::cout << this->value_[i1] << " ";
         }
         std::cout << "\n--------------------------------" << std::endl;
@@ -47,7 +60,7 @@ public:
             auto subtree = subtrees_.at(i0);
             // print the node's value
             std::cout << "-------------------------------" << std::endl;
-            for (int i1 = 0; i1 < 6; i1++) {
+            for (int i1 = 0; i1 < value_.size(); i1++) {
                 std::cout << subtree->value_[i1] << " ";
             }
             std::cout << "\n--------------------------------" << std::endl;
@@ -69,7 +82,7 @@ public:
                     auto node = subtree.at(i1);
                     // print the node's value
                     std::cout << "-------------------------------" << std::endl;
-                    for (int i2 = 0; i2 < 6; i2++) {
+                    for (int i2 = 0; i2 < value_.size(); i2++) {
                         std::cout << node->value_[i2] << " ";
                     }
                     std::cout << "\n--------------------------------" << std::endl;
@@ -80,8 +93,14 @@ public:
             all_sub_nodes = tmp_all_sub_nodes;
         }
     }
+    Point GetPoint() {
+        return value_;
+    }
+    TreeNode* GetParent() {
+        return parent_;
+    }
 private:
-    double value_[6];
+    Point value_;
     TreeNode * parent_; // nullptr is for the root
     std::vector< TreeNode * > subtrees_; // a set of children connect to this tree/subtree
 private:

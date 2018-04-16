@@ -20,8 +20,8 @@ namespace plan {
             bool rtn = false;
             // sample the edge and call isPointInCollision for each sample
             double step = 0.01; // 10mm step
-            Point c = (b - a).Normalize();
-            double distance = (b-a).Norm();
+            Point c = (b - a).normalized();
+            double distance = (b-a).norm();
             int steps = (distance + step) / step;
             for(int i0 = 0; i0 < steps; i0++) {
                 Point d;
@@ -32,7 +32,7 @@ namespace plan {
                 } else {
                     d = d + c*step;
                 }
-                rtn = isPointInCollision(d);
+                rtn = isPointInCollision(d); // this gonna check against all obstacles
                 if (rtn)
                     break;
             }
