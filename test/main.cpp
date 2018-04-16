@@ -11,13 +11,6 @@
 #include "SimpleOptimizer.h"
 #include <fstream>
 
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
-
-QT_CHARTS_USE_NAMESPACE
-
 bool TestRRTNoStepSize(std::deque< plan::Point > &path_res) {
     // test case for RRT planner. template for others.
     // step 1, prepare the configuration space
@@ -94,47 +87,12 @@ bool TestRRTWithStepSizeOptimizer(std::deque< plan::Point > &raw_path, std::dequ
 }
 
 int main(int argc, char ** argv) {
-    QApplication a(argc, argv);
-    QLineSeries *series0 = new QLineSeries();
-    QLineSeries *series1 = new QLineSeries();
-    QLineSeries *series2 = new QLineSeries();
-
     std::deque< plan::Point > path_res;
     TestRRTNoStepSize(path_res);
-    for (auto &pt : path_res) {
-        series0->append(pt(0), pt(1));
-    }
-    series0->setName("Path w/o Step Size");
     path_res.clear();
     std::deque< plan::Point > raw_path, optimal_path;
     TestRRTWithStepSizeOptimizer(raw_path, optimal_path);
-    for (auto &pt : raw_path) {
-        series1->append(pt(0), pt(1));
-    }
-    series1->setName("Path w/ Step Size");
-    for (auto &pt : optimal_path) {
-        series2->append(pt(0), pt(1));
-    }
-    series2->setName("Path w/ Optimization");
-    QChart *chart = new QChart();
-    chart->legend()->hide();
-    chart->addSeries(series0);
-    chart->addSeries(series1);
-    chart->addSeries(series2);
-    chart->createDefaultAxes();
-    chart->legend()->setVisible(true);
-    chart->legend()->setAlignment(Qt::AlignBottom);
-    chart->setTitle("RRT Motion Planning Example");
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-
-    QMainWindow window;
-    window.setCentralWidget(chartView);
-    window.resize(400, 300);
-    window.show();
-
-    return a.exec(); // The window won't stop.
+    return 0; // The window won't stop.
 }
 
 
