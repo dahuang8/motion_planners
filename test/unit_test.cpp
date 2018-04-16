@@ -11,13 +11,6 @@
 #include "SimpleOptimizer.h"
 #include <fstream>
 
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
-
-QT_CHARTS_USE_NAMESPACE
-
 TEST (TreeTest, TreeConstructionAndTraverse) {
     auto root = new plan::TreeNode();
     root->SetParent(nullptr); // create a root
@@ -200,7 +193,6 @@ TEST (Planner, RRT_STEPSIZE) {
         outfile2 << pt(0) << " " << pt(1) << std::endl;
     }
     outfile2.close();
-
 }
 
 /*
